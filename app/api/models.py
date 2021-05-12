@@ -1,4 +1,6 @@
 from django.db import models
+import datetime
+from django.utils import timezone
 
 # Create your models here.
 class Proker(models.Model):
@@ -20,6 +22,20 @@ class Event(models.Model):
 
     def __str__(self):
         return self.name
+
+    @staticmethod
+    def get_event_in_days(days=1):
+        start = datetime.date.today()
+        end = start + datetime.timedelta(days=days)
+        return Event.objects.filter(date__range=[start, end], status=False)
+
+    @staticmethod
+    def get_weekly_events():
+        return Event.get_event_in_days(6)
+
+    @staticmethod
+    def get_monthly_events():
+        return Event.get_event_in_days(29)
 
     class Meta:
         db_table = 'event'

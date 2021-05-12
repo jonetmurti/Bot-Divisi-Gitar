@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import environ
+import os
 from pathlib import Path
 
 env = environ.Env(
@@ -116,7 +117,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -124,9 +125,35 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-APPEND_SLASH = False
+APPEND_SLASH = True
 
 
 # Line Bot Configuration
 CHANNEL_ACCESS_TOKEN = env('CHANNEL_ACCESS_TOKEN')
 CHANNEL_SECRET = env('CHANNEL_SECRET')
+
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'custom': {
+            'format': '[{levelname}] [{asctime}] - {message} ({filename})',
+            'style': '{',
+        }  
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'custom'
+        },
+    },
+    'loggers': {
+        'api': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+    }
+}
